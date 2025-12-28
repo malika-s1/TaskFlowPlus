@@ -1,0 +1,152 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Вход - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Вход в систему</h3>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Неверное имя пользователя или пароль.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success alert-dismissible fade show">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="mb-4">
+                        <h5><i class="fas fa-info-circle text-primary me-2"></i>Инструкция:</h5>
+                        <p>Используйте email или имя пользователя для входа в систему.</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="id_username" class="form-label fw-bold">
+                                <i class="fas fa-user me-1"></i>Email или имя пользователя *
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   name="username" 
+                                   id="id_username" 
+                                   required
+                                   placeholder="Введите email или имя пользователя">
+                            <div class="form-text">
+                                Тот email или имя, который указали при регистрации
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="id_password" class="form-label fw-bold">
+                                <i class="fas fa-lock me-1"></i>Пароль *
+                            </label>
+                            <input type="password" 
+                                   class="form-control form-control-lg" 
+                                   name="password" 
+                                   id="id_password" 
+                                   required
+                                   placeholder="Введите пароль">
+                            <div class="form-text">
+                                <a href="#" class="text-decoration-none">Забыли пароль?</a>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember">
+                                <label class="form-check-label" for="remember">
+                                    Запомнить меня
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Войти в систему
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <p>Еще нет аккаунта?</p>
+                        <a href="{% url 'register' %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Создать новый аккаунт
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <p class="mb-0 text-muted">
+                        <small><i class="fas fa-shield-alt me-1"></i>Ваши данные защищены</small>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5><i class="fas fa-question-circle me-2 text-info"></i>Проблемы со входом?</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Проверьте правильность email</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Убедитесь, что Caps Lock выключен</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Попробуйте восстановить пароль</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Обратитесь в поддержку</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Подсказки при фокусе
+document.getElementById('id_username').addEventListener('focus', function() {
+    this.setAttribute('title', 'Пример: admin@example.com или имя пользователя');
+});
+
+document.getElementById('id_password').addEventListener('focus', function() {
+    this.setAttribute('title', 'Пароль, указанный при регистрации');
+});
+
+// Показать/скрыть пароль
+const togglePassword = document.createElement('span');
+togglePassword.innerHTML = '<i class="fas fa-eye"></i>';
+togglePassword.className = 'btn btn-sm btn-outline-secondary position-absolute end-0 top-0 mt-2 me-2';
+togglePassword.style.cursor = 'pointer';
+togglePassword.onclick = function() {
+    const passwordInput = document.getElementById('id_password');
+    const icon = this.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        passwordInput.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+};
+
+// Добавляем кнопку показа пароля
+const passwordGroup = document.getElementById('id_password').parentNode;
+passwordGroup.style.position = 'relative';
+passwordGroup.appendChild(togglePassword);
+</script>
+{% endblock %}

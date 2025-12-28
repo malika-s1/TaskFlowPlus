@@ -1,0 +1,279 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Регистрация - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Создание аккаунта</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="mb-4"><i class="fas fa-info-circle text-primary me-2"></i>Инструкция по заполнению:</h4>
+                            
+                            <div class="mb-4">
+                                <h5><i class="fas fa-user me-2 text-success"></i>Имя пользователя:</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>3-150 символов</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Буквы, цифры, @/./+/-/_</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Уникальное имя</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i>Не использовать пробелы</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5><i class="fas fa-envelope me-2 text-info"></i>Email:</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Действующий email</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Для восстановления пароля</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Уникальный адрес</li>
+                                    <li><i class="fas fa-example me-2"></i>Пример: user@example.com</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5><i class="fas fa-lock me-2 text-warning"></i>Пароль:</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Минимум 8 символов</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Лучше с цифрами и символами</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i>Избегайте простых паролей</li>
+                                    <li><i class="fas fa-lightbulb me-2 text-warning"></i>Совет: Используйте фразу</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-shield-alt me-2"></i>Безопасность:</h6>
+                                <p class="mb-0">Все данные защищены. Пароль хранится в зашифрованном виде.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 border-start">
+                            <h4 class="mb-4"><i class="fas fa-edit me-2 text-primary"></i>Форма регистрации:</h4>
+                            
+                            <form method="post" id="registerForm">
+                                {% csrf_token %}
+                                
+                                <div class="mb-4">
+                                    <label for="username" class="form-label fw-bold">
+                                        <i class="fas fa-user me-1"></i>Имя пользователя *
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control form-control-lg" 
+                                           id="username" 
+                                           name="username" 
+                                           required
+                                           placeholder="Например: ivan_2024"
+                                           value="{{ request.POST.username|default:'' }}">
+                                    <div class="form-text">
+                                        Будет видно другим пользователям
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="email" class="form-label fw-bold">
+                                        <i class="fas fa-envelope me-1"></i>Email адрес *
+                                    </label>
+                                    <input type="email" 
+                                           class="form-control form-control-lg" 
+                                           id="email" 
+                                           name="email" 
+                                           required
+                                           placeholder="your.email@example.com"
+                                           value="{{ request.POST.email|default:'' }}">
+                                    <div class="form-text">
+                                        На этот email придут уведомления
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="password1" class="form-label fw-bold">
+                                        <i class="fas fa-key me-1"></i>Пароль *
+                                    </label>
+                                    <input type="password" 
+                                           class="form-control form-control-lg" 
+                                           id="password1" 
+                                           name="password1" 
+                                           required
+                                           placeholder="Не менее 8 символов">
+                                    <div class="form-text">
+                                        <span id="passwordStrength" class="badge bg-secondary">Сложность: Низкая</span>
+                                        <div class="progress mt-2" style="height: 5px;">
+                                            <div id="passwordProgress" class="progress-bar" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="password2" class="form-label fw-bold">
+                                        <i class="fas fa-key me-1"></i>Подтвердите пароль *
+                                    </label>
+                                    <input type="password" 
+                                           class="form-control form-control-lg" 
+                                           id="password2" 
+                                           name="password2" 
+                                           required
+                                           placeholder="Повторите пароль">
+                                    <div class="form-text">
+                                        Должен совпадать с первым паролем
+                                    </div>
+                                    <div id="passwordMatch" class="form-text"></div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="terms" required>
+                                        <label class="form-check-label" for="terms">
+                                            Я соглашаюсь с <a href="#" class="text-decoration-none">условиями использования</a> и <a href="#" class="text-decoration-none">политикой конфиденциальности</a>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-user-plus me-2"></i>Создать аккаунт
+                                    </button>
+                                    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Уже есть аккаунт? Войдите
+                                    </a>
+                                </div>
+                            </form>
+                            
+                            <div class="mt-4 text-center">
+                                <p class="text-muted">
+                                    <small>* - обязательные поля для заполнения</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <p class="mb-0">
+                        <i class="fas fa-question-circle me-1"></i>
+                        Нужна помощь? 
+                        <a href="#" class="text-decoration-none">Свяжитесь с поддержкой</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Проверка сложности пароля
+document.getElementById('password1').addEventListener('input', function() {
+    const password = this.value;
+    const progressBar = document.getElementById('passwordProgress');
+    const strengthText = document.getElementById('passwordStrength');
+    
+    let strength = 0;
+    let width = 0;
+    let color = 'bg-danger';
+    let text = 'Низкая';
+    
+    // Проверка длины
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
+    
+    // Проверка на наличие разных типов символов
+    if (/[A-Z]/.test(password)) strength++; // Заглавные буквы
+    if (/[a-z]/.test(password)) strength++; // Строчные буквы
+    if (/[0-9]/.test(password)) strength++; // Цифры
+    if (/[^A-Za-z0-9]/.test(password)) strength++; // Специальные символы
+    
+    // Устанавливаем прогресс
+    if (strength === 0) {
+        width = 0;
+        text = 'Низкая';
+        color = 'bg-danger';
+    } else if (strength <= 2) {
+        width = 33;
+        text = 'Средняя';
+        color = 'bg-warning';
+    } else if (strength <= 4) {
+        width = 66;
+        text = 'Хорошая';
+        color = 'bg-info';
+    } else {
+        width = 100;
+        text = 'Отличная';
+        color = 'bg-success';
+    }
+    
+    progressBar.style.width = width + '%';
+    progressBar.className = 'progress-bar ' + color;
+    strengthText.textContent = 'Сложность: ' + text;
+    strengthText.className = 'badge ' + color.replace('bg-', 'badge-');
+});
+
+// Проверка совпадения паролей
+function checkPasswordMatch() {
+    const password1 = document.getElementById('password1').value;
+    const password2 = document.getElementById('password2').value;
+    const matchText = document.getElementById('passwordMatch');
+    
+    if (password2.length === 0) {
+        matchText.textContent = '';
+        matchText.className = 'form-text';
+    } else if (password1 === password2) {
+        matchText.innerHTML = '<i class="fas fa-check text-success me-1"></i>Пароли совпадают';
+        matchText.className = 'form-text text-success fw-bold';
+    } else {
+        matchText.innerHTML = '<i class="fas fa-times text-danger me-1"></i>Пароли не совпадают';
+        matchText.className = 'form-text text-danger fw-bold';
+    }
+}
+
+document.getElementById('password2').addEventListener('input', checkPasswordMatch);
+document.getElementById('password1').addEventListener('input', checkPasswordMatch);
+
+// Примеры для полей
+document.getElementById('username').addEventListener('focus', function() {
+    this.setAttribute('title', 'Примеры: ivan_2024, anna_pro, maksim88');
+});
+
+document.getElementById('email').addEventListener('focus', function() {
+    this.setAttribute('title', 'Используйте реальный email для восстановления пароля');
+});
+
+document.getElementById('password1').addEventListener('focus', function() {
+    this.setAttribute('title', 'Примеры хороших паролей: MyTask2024!, Project@123, SecurePass456#');
+});
+</script>
+
+<style>
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.badge {
+    font-size: 0.85em;
+}
+
+ul li {
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}

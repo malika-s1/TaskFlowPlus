@@ -1,0 +1,166 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Редактирование профиля - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Редактирование профиля
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <h5 class="mb-3"><i class="fas fa-user me-2"></i>Основная информация</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Имя пользователя *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="username" 
+                                       value="{{ user.username }}" 
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email *</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       name="email" 
+                                       value="{{ user.email }}" 
+                                       required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Имя</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="first_name" 
+                                       value="{{ user.first_name|default:'' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Фамилия</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="last_name" 
+                                       value="{{ user.last_name|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5 class="mb-3"><i class="fas fa-cog me-2"></i>Настройки</h5>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Тема интерфейса</label>
+                            <select class="form-select" name="theme">
+                                <option value="light" {% if user_profile.theme == 'light' %}selected{% endif %}>Светлая</option>
+                                <option value="dark" {% if user_profile.theme == 'dark' %}selected{% endif %}>Темная</option>
+                                <option value="auto" {% if user_profile.theme == 'auto' %}selected{% endif %}>Авто</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Уведомления</label>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       name="email_notifications" 
+                                       id="email_notifications"
+                                       {% if user_profile.email_notifications %}checked{% endif %}>
+                                <label class="form-check-label" for="email_notifications">
+                                    Email уведомления
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       name="task_notifications" 
+                                       id="task_notifications"
+                                       {% if user_profile.task_notifications %}checked{% endif %}>
+                                <label class="form-check-label" for="task_notifications">
+                                    Уведомления о новых задачах
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       name="deadline_notifications" 
+                                       id="deadline_notifications"
+                                       {% if user_profile.deadline_notifications %}checked{% endif %}>
+                                <label class="form-check-label" for="deadline_notifications">
+                                    Напоминания о дедлайнах
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Сохранить изменения
+                            </button>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Реализация темной темы
+const savedTheme = localStorage.getItem('theme') || '{{ user_profile.theme }}';
+if (savedTheme === 'dark' || (savedTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.setAttribute('data-bs-theme', 'dark');
+}
+
+// Сохранение темы при изменении
+document.querySelector('select[name="theme"]').addEventListener('change', function() {
+    localStorage.setItem('theme', this.value);
+    if (this.value === 'dark' || (this.value === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+    } else {
+        document.documentElement.setAttribute('data-bs-theme', 'light');
+    }
+});
+</script>
+{% endblock %}
+<script>
+// Реализация темной темы через localStorage
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-bs-theme', savedTheme);
+
+// Установка темы из формы
+document.querySelector('select[name="theme"]').addEventListener('change', function() {
+    localStorage.setItem('theme', this.value);
+    document.documentElement.setAttribute('data-bs-theme', this.value);
+});
+
+// Для темы "Авто" - отслеживание системных предпочтений
+if (savedTheme === 'auto') {
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-bs-theme', systemPrefersDark ? 'dark' : 'light');
+    
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        document.documentElement.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
+    });
+}
+</script>

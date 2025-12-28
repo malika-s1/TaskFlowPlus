@@ -1,0 +1,92 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Удаление аккаунта - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Удаление аккаунта
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-exclamation-circle me-2"></i>Внимание!</h5>
+                        <p class="mb-0">
+                            Вы собираетесь удалить свой аккаунт. Это действие:
+                        </p>
+                        <ul class="mb-0">
+                            <li>НЕОБРАТИМО</li>
+                            <li>Удалит все ваши проекты и задачи</li>
+                            <li>Удалит все данные профиля</li>
+                            <li>Прервет ваши активные сессии</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p>Перед удалением аккаунта убедитесь, что:</p>
+                        <ul>
+                            <li>Вы экспортировали нужные данные</li>
+                            <li>Вы передали проекты другим пользователям</li>
+                            <li>Вы сохранили важную информацию</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                            <label class="form-check-label fw-bold" for="confirmDelete">
+                                Я понимаю последствия и хочу удалить свой аккаунт
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <form method="post" id="deleteForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="passwordConfirm" class="form-label">
+                                Для подтверждения введите ваш пароль:
+                            </label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="passwordConfirm" 
+                                   name="password"
+                                   required>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg" id="deleteBtn" disabled>
+                                <i class="fas fa-trash me-2"></i>Удалить аккаунт навсегда
+                            </button>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Активация кнопки только при подтверждении
+const confirmCheckbox = document.getElementById('confirmDelete');
+const deleteBtn = document.getElementById('deleteBtn');
+
+confirmCheckbox.addEventListener('change', function() {
+    deleteBtn.disabled = !this.checked;
+});
+
+// Подтверждение удаления
+document.getElementById('deleteForm').addEventListener('submit', function(e) {
+    if (!confirm('Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить!')) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,260 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Дашборд - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Заголовок -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            <i class="fas fa-tachometer-alt text-primary me-2"></i>Дашборд
+        </h1>
+        <div>
+            <span class="text-muted">Привет, {{ user.username }}!</span>
+        </div>
+    </div>
+    
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Проекты</h6>
+                            <h2 class="mb-0">{{ total_projects }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-project-diagram fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Всего задач</h6>
+                            <h2 class="mb-0">{{ total_tasks }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-tasks fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Выполнено</h6>
+                            <h2 class="mb-0">{{ completed_tasks }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-check-circle fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">В процессе</h6>
+                            <h2 class="mb-0">{{ total_tasks|add:"-completed_tasks" }}</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Основной контент -->
+    <div class="row">
+        <!-- Последние проекты -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-project-diagram text-primary me-2"></i>Мои проекты
+                    </h5>
+                    <a href="{% url 'projects_list' %}" class="btn btn-sm btn-outline-primary">
+                        Все проекты
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if projects %}
+                        <div class="list-group list-group-flush">
+                            {% for project in projects %}
+                            <div class="list-group-item border-0 px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ project.title }}</h6>
+                                        <p class="text-muted small mb-0">
+                                            {{ project.description|truncatechars:100|default:"Без описания" }}
+                                        </p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ project.created_at|date:"d.m.Y" }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Проектов пока нет</h5>
+                            <p class="text-muted">Создайте первый проект для начала работы</p>
+                            <a href="{% url 'create_project' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Создать проект
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Последние задачи -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tasks text-success me-2"></i>Мои задачи
+                    </h5>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                        Все задачи
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if tasks %}
+                        <div class="list-group list-group-flush">
+                            {% for task in tasks %}
+                            <div class="list-group-item border-0 px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="d-flex align-items-center mb-1">
+                                            <span class="badge bg-{% if task.status == 'done' %}success{% elif task.status == 'in_progress' %}warning{% else %}secondary{% endif %} me-2">
+                                                {{ task.get_status_display }}
+                                            </span>
+                                            <h6 class="mb-0">{{ task.title }}</h6>
+                                        </div>
+                                        <p class="text-muted small mb-1">
+                                            {{ task.description|truncatechars:80 }}
+                                        </p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-project-diagram me-1"></i>
+                                            {{ task.project.title }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <a href="#" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Задач пока нет</h5>
+                            <p class="text-muted">Задачи появятся здесь, когда вам их назначат</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Быстрые действия -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt text-warning me-2"></i>Быстрые действия
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'create_project' %}" class="btn btn-primary w-100 py-3">
+                                <i class="fas fa-plus-circle fa-2x mb-2"></i><br>
+                                Новый проект
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="#" class="btn btn-success w-100 py-3">
+                                <i class="fas fa-tasks fa-2x mb-2"></i><br>
+                                Новая задача
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'profile' %}" class="btn btn-info w-100 py-3">
+                                <i class="fas fa-user fa-2x mb-2"></i><br>
+                                Мой профиль
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="#" class="btn btn-warning w-100 py-3">
+                                <i class="fas fa-chart-bar fa-2x mb-2"></i><br>
+                                Аналитика
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+}
+
+.list-group-item {
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.list-group-item:hover {
+    border-left-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+
+.btn {
+    border-radius: 8px;
+}
+</style>
+{% endblock %}

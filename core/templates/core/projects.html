@@ -1,0 +1,85 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Мои проекты - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Заголовок -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            <i class="fas fa-project-diagram text-primary me-2"></i>Мои проекты
+        </h1>
+        <a href="{% url 'create_project' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Новый проект
+        </a>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if projects %}
+        <div class="row">
+            {% for project in projects %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ project.title }}</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Редактировать</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-trash me-2"></i>Удалить</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-users me-2"></i>Участники</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-muted">
+                            {{ project.description|default:"Без описания" }}
+                        </p>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-light text-dark">
+                                <i class="fas fa-tasks me-1"></i>
+                                Задач: {{ project.tasks.count }}
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ project.created_at|date:"d.m.Y" }}
+                            </small>
+                            <a href="#" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-external-link-alt me-1"></i>Открыть
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-folder-open fa-4x text-muted"></i>
+            </div>
+            <h3 class="text-muted">Проектов пока нет</h3>
+            <p class="text-muted mb-4">Создайте первый проект для управления задачами</p>
+            <a href="{% url 'create_project' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Создать первый проект
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

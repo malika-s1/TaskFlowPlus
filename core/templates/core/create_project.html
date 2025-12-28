@@ -1,0 +1,101 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Новый проект - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>Создание нового проекта
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">
+                                <i class="fas fa-heading me-1"></i>Название проекта *
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="title" 
+                                   name="title" 
+                                   required
+                                   placeholder="Введите название проекта"
+                                   maxlength="200">
+                            <div class="form-text">
+                                Краткое и понятное название, не более 200 символов
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1"></i>Описание проекта
+                            </label>
+                            <textarea class="form-control" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="5"
+                                      placeholder="Опишите цели и задачи проекта"></textarea>
+                            <div class="form-text">
+                                Опишите, что будете делать в этом проекте. Можно добавить позже.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5><i class="fas fa-cog me-2"></i>Настройки проекта</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Приоритет</label>
+                                    <select class="form-select" name="priority">
+                                        <option value="low" selected>Низкий</option>
+                                        <option value="medium">Средний</option>
+                                        <option value="high">Высокий</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Цвет проекта</label>
+                                    <input type="color" class="form-control form-control-color" name="color" value="#3B82F6">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check-circle me-2"></i>Создать проект
+                            </button>
+                            <a href="{% url 'projects_list' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-lightbulb text-warning me-2"></i>Советы:</h6>
+                            <ul class="small text-muted mb-0">
+                                <li>Давайте проектам конкретные названия</li>
+                                <li>Добавляйте описание для лучшего понимания</li>
+                                <li>Используйте цвет для визуального выделения</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-question-circle text-info me-2"></i>Что дальше?</h6>
+                            <ul class="small text-muted mb-0">
+                                <li>Добавьте участников в проект</li>
+                                <li>Создайте первые задачи</li>
+                                <li>Настройте дедлайны и приоритеты</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

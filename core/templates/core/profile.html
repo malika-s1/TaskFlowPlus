@@ -1,0 +1,216 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Мой профиль - TaskFlow+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Левая колонка - информация о пользователе -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <!-- Аватар -->
+                    <div class="mb-4">
+                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center" 
+                             style="width: 120px; height: 120px;">
+                            <i class="fas fa-user fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Информация -->
+                    <h3 class="mb-2">{{ user.username }}</h3>
+                    <p class="text-muted">{{ user.email }}</p>
+                    
+                    <!-- Статистика -->
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <h4 class="mb-0">{{ projects_count }}</h4>
+                                <small class="text-muted">Проектов</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-3">
+                                <h4 class="mb-0">{{ tasks_count }}</h4>
+                                <small class="text-muted">Задач</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Кнопки действий -->
+                    <div class="mt-4">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-edit me-2"></i>Редактировать профиль </a>
+                        <a href="{% url 'change_password' %}" class="btn btn-outline-secondary w-100 mb-2">
+                            <i class="fas fa-lock me-2"></i>Сменить пароль </a>
+                        <a href="{% url 'delete_account' %}" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-trash me-2"></i>Удалить аккаунт </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Информация об аккаунте -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Информация об аккаунте</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-user-circle text-primary me-2"></i>
+                            <strong>Имя пользователя:</strong> {{ user.username }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-envelope text-primary me-2"></i>
+                            <strong>Email:</strong> {{ user.email }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-calendar text-primary me-2"></i>
+                            <strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}
+                        </li>
+                        <li>
+                            <i class="fas fa-sign-in-alt text-primary me-2"></i>
+                            <strong>Последний вход:</strong> {{ user.last_login|date:"d.m.Y H:i"|default:"Еще не входил" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Правая колонка - активность и настройки -->
+        <div class="col-lg-8">
+            <!-- Статистика активности -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>Статистика активности
+                    </h5>
+                    <select class="form-select form-select-sm" style="width: auto;">
+                        <option>За последнюю неделю</option>
+                        <option>За месяц</option>
+                        <option>За все время</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">График активности</h5>
+                        <p class="text-muted">Здесь будет отображаться ваша активность по дням</p>
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="border rounded p-3">
+                                <h3 class="text-primary mb-1">12</h3>
+                                <small class="text-muted">Созданных задач</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="border rounded p-3">
+                                <h3 class="text-success mb-1">8</h3>
+                                <small class="text-muted">Выполнено задач</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="border rounded p-3">
+                                <h3 class="text-info mb-1">4</h3>
+                                <small class="text-muted">Комментариев</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="border rounded p-3">
+                                <h3 class="text-warning mb-1">2</h3>
+                                <small class="text-muted">Новых проектов</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Настройки -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog text-warning me-2"></i>Настройки
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6><i class="fas fa-bell me-2"></i>Уведомления</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                            <label class="form-check-label" for="emailNotifications">
+                                Email уведомления
+                            </label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="taskNotifications" checked>
+                            <label class="form-check-label" for="taskNotifications">
+                                Уведомления о новых задачах
+                            </label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="deadlineNotifications">
+                            <label class="form-check-label" for="deadlineNotifications">
+                                Напоминания о дедлайнах
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6><i class="fas fa-palette me-2"></i>Внешний вид</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Тема</label>
+                            <select class="form-select">
+                                <option selected>Светлая</option>
+                                <option>Темная</option>
+                                <option>Авто</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h6><i class="fas fa-shield-alt me-2"></i>Безопасность</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-warning">
+                                <i class="fas fa-key me-2"></i>Изменить пароль
+                            </button>
+                            <button class="btn btn-outline-danger">
+                                <i class="fas fa-trash me-2"></i>Удалить аккаунт
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 10px;
+}
+
+.rounded-circle {
+    transition: transform 0.3s;
+}
+
+.rounded-circle:hover {
+    transform: scale(1.05);
+}
+
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+}
+
+.border.rounded {
+    transition: all 0.2s;
+}
+
+.border.rounded:hover {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 1px #0d6efd;
+}
+</style>
+{% endblock %}
